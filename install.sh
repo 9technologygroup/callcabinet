@@ -9,10 +9,8 @@ echo "###########"
 
 echo ""
 
-read -p "Enter Customer Name without any spaces: " customer_name
 read -p "Enter Site ID from Call Cabinet: " SiteID
 
-echo "Thanks, to confirm you are setting up call cabinet for $customer_name"
 echo "with site id of $side_id"
 
 echo ""
@@ -25,10 +23,8 @@ echo "$username:$password" | chpasswd
 
 echo "### Now creating folders"
 
-mkdir /home/$username/$customer_name
 mkdir /home/$username/recordings
 mkdir /home/$username/movelogs
-#mkdir /home/$username/recordings/$customer_name
 touch /home/$username/recording_sync.log
 touch /home/$username/getccrecdata.log
 
