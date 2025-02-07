@@ -40,8 +40,8 @@ cd /home/$username
 wget "https://systems01.technical.network/callcab.tar.gz"
 
 echo "Extracting the callcab.tar.gz file"
+mkdir /home/$username
 tar -xzf callcab.tar.gz -C /home/$username/
-chown -R $username: /home/$username/
 
 echo "Listing the current directory"
 
@@ -55,14 +55,14 @@ echo "Configuring the files with the right username"
 
 echo ""
 
-sed -i "s/^username=\".*\"/username=\"$username\"/" 3cxmoverecdata.sh
-sed -i "s/^username=\".*\"/username=\"$username\"/" ccdaemon.sh
-sed -i "s/^username=\".*\"/username=\"$username\"/" ccinitd.sh
+sed -i "s/^username=\".*\"/username=\"$username\"/" /home/$username/3cxmoverecdata.sh
+sed -i "s/^username=\".*\"/username=\"$username\"/" /home/$username/ccdaemon.sh
+sed -i "s/^username=\".*\"/username=\"$username\"/" /home/$username/ccinitd.sh
 #sed -i "s/^username=\".*\"/username=\"$username\"/" rsync.sh
-sed -i "s/^customer_name=\".*\"/customer_name=\"$customer_name\"/" rsync.sh
-sed -i "s/SiteID:<.*>/SiteID:<$SiteID>/" CCconfig.txt
-sed -i "s|Repository:</home/.*>|Repository:</home/$username/recordings/>|" CCconfig.txt
-sed -i "s/username/$username/" cc.service
+sed -i "s/^customer_name=\".*\"/customer_name=\"$customer_name\"/" /home/$username/rsync.sh
+sed -i "s/SiteID:<.*>/SiteID:<$SiteID>/" /home/$username/CCconfig.txt
+sed -i "s|Repository:</home/.*>|Repository:</home/$username/recordings/>|" /home/$username/CCconfig.txt
+sed -i "s/username/$username/" /home/$username/cc.service
 
 echo "setting relevant files to be executable"
 
@@ -78,11 +78,15 @@ echo "creating and Starting the service"
 
 mv /home/$username/cc.service /etc/systemd/system/cc.service
 
+echo "* * * * *	$username	sudo /home/$username/3cxmoverecdata.sh" >> /etc/crontab
+echo "59 23 * * *	$username	sudo systemctl restart cc.service" >> /etc/crontab
+
+chown -R $username: /home/$username/
+
 systemctl daemon-reload
 systemctl stop cc.service
 systemctl start cc.service
 systemctl status cc.service
-
 
 echo "#########################"
 echo "Please save the following"
